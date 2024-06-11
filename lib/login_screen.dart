@@ -1,10 +1,72 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'registration_screen.dart';
 import 'home_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    try {
+      // Get the app's documents directory
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/registrations.txt');
+
+      // Check if the file exists
+      if (!await file.exists()) {
+        // Show error message for 2 seconds
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No registrations found'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+
+      // Read the file
+      final registrations = await file.readAsString();
+      final existingUsers = registrations.split('\n');
+
+      // Check if the username and password match with any of the existing registrations
+      for (var user in existingUsers) {
+        final userData = user.split(',');
+        if (userData.length >= 3 &&
+            userData[0] == _usernameController.text &&
+            userData[2] == _passwordController.text) {
+          // Navigate to home page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+          return;
+        }
+      }
+
+      // Show error message for 2 seconds
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Invalid Username or Password'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      // Show error message for 2 seconds
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +76,7 @@ class LoginPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(top: 15.0),
             child: Text(
-              'Chat App',
+              'My App',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 35,
@@ -63,26 +125,7 @@ class LoginPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Perform login logic here
-                    String username = _usernameController.text;
-                    String password = _passwordController.text;
-
-                    // Dummy validation - replace with actual validation logic
-                    if (username == 'admin' && password == 'password') {
-                      // Navigate to home page
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                      );
-                    } else {
-                      // Show error message for 2 seconds
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Invalid Username or Password'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    }
+                    _login();
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
@@ -106,7 +149,7 @@ class LoginPage extends StatelessWidget {
                     // Navigate to registration page
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RegistrationPage()),
+                      MaterialPageRoute(builder: (context) => RegistrationScreen()),
                     );
                   },
                   child: Text(

@@ -2,8 +2,10 @@ import 'package:chat_app/home_page.dart';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'profile_screen.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  ErrorWidget.builder = (FlutterErrorDetails details) => Container();
   runApp(LoginApp());
 }
 
