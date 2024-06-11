@@ -14,12 +14,15 @@ dependencies:
   permission_handler: ^8.3.0
   image_picker: ^0.8.4+2
   camera: ^0.10.0+2
-  geolocator: ^8.2.1
   intl: ^0.17.0
   http: ^0.13.3
   path_provider: ^2.0.2
   shared_preferences: ^2.0.3
   cupertino_icons: ^1.0.6
+  flutter_map: ^0.13.0
+  geolocator: ^7.0.3
+  latlong2: ^0.8.0
+  image: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +31,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/static_map.jpeg
